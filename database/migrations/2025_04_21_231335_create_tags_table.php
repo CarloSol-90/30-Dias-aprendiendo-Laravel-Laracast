@@ -12,12 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tags', function (Blueprint $table) {
+            $table->engine('InnoDB');
             $table->id();
             $table->string('name');
             $table->timestamps();
         });
 
-        Schema::create('job_tags', function (Blueprint $table) {
+        Schema::create('job_tag', function (Blueprint $table) {
+            $table->engine('InnoDB');
             $table->id();
             $table->foreignIdFor(\App\Models\Job::class, 'job_listing_id')->constrained()->cascadeOnDelete();
             $table->foreignIdFor(\App\Models\Tag::class)->constrained()->cascadeOnDelete();

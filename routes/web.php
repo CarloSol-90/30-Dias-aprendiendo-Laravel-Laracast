@@ -9,8 +9,11 @@ Route::get('/', function () {
 });
 
 Route::get('/jobs', function () {
+    $jobs = Job::with('employer')->simplePaginate(3); // En esta llamada get, obtenemos cada registro de la tabla de trabajos y mostrrarlos con paginacion.
+    //implementamos carga anticipada para la relación employer. trabajo con empleador, dame todos los resultados
+
     return view('jobs', [
-        'jobs' => Job::all()
+        'jobs' => $jobs //Lo extraemos en su propia variable 
     ]);
 });
 

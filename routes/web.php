@@ -8,6 +8,7 @@ Route::get('/', function () {
     return view('home');
 });
 
+//Index -- Ruta para mostrar la lista de trabajos
 Route::get('/jobs', function () {
     $jobs = Job::with('employer')->latest()->simplePaginate(3); // En esta llamada get, obtenemos cada registro de la tabla de trabajos y mostrrarlos con paginacion.
     //implementamos carga anticipada para la relación employer. trabajo con empleador, dame todos los resultados
@@ -18,31 +19,50 @@ Route::get('/jobs', function () {
     ]);
 });
 
-//ruta para crreear un nuevo empleo
+//Create -- ruta para crear un nuevo empleo
 Route::get('/jobs/create', function () {
     return view('jobs.create');
 });
 
-//Ruta para mostrar todos los empleos
+//Show -- Ruta para mostrar un trabajo específico
 Route::get('/jobs/{id}', function ($id) {
     $job = Job::find($id);
 
     return view('jobs.show', ['job' => $job]);
 });
 
+//Store -- Ruta para almacenar un nuevo trabajo
 Route::post('/jobs', function () {
-    //validation...
+    //validation
+    request()->validate([
+        'title' => ['required', 'min:3'],
+        'salary' => ['required'],
+    ]);
 
-    Job::create([
+    Job::create([ //Creamos un nuevo registro en la tabla de trabajos
         'title' => request('title'),
         'salary' => request('salary'),
         'employer_id' => 1,
     ]);
 
-    return redirect('/jobs');
+    return redirect('/jobs'); //Redirigimos a la ruta de trabajos después de crear un nuevo trabajo
 });
 
+//Edit -- Ruta para editar un trabajo específico
+Route::get('/jobs/{id}/edit', function ($id) {
+    $job = Job::find($id);
 
-Route::get('/contact', function () {
+    return view('jobs.edit', ['job' => $job]);
+});
+
+//Update -- Ruta para actualizar un trabajo específico
+Route::patch('/jobs/{id}', function ($id) {});
+//patch es un método HTTP que se utiliza para aplicar modificaciones parciales a un recurso existente. En este caso, se utiliza para actualizar un trabajo específico en la base de datos.
+
+//Destroy -- Ruta para eliminar un trabajo específico
+Route::delete('/jobs/{id}', function ($id) {});
+//delete es un método HTTP que se utiliza para eliminar un recurso específico en la base de datos. En este caso, se utiliza para eliminar un trabajo específico.
+
+Route::get('/contact', function () { //ruta para mostrar el formulario de contacto
     return view('contact');
 });

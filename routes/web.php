@@ -56,11 +56,35 @@ Route::get('/jobs/{id}/edit', function ($id) {
 });
 
 //Update -- Ruta para actualizar un trabajo específico
-Route::patch('/jobs/{id}', function ($id) {});
-//patch es un método HTTP que se utiliza para aplicar modificaciones parciales a un recurso existente. En este caso, se utiliza para actualizar un trabajo específico en la base de datos.
+Route::patch('/jobs/{id}', function ($id) {
+    //patch es un método HTTP que se utiliza para aplicar modificaciones parciales a un recurso existente. En este caso, se utiliza para actualizar un trabajo específico en la base de datos.
+    //1. Validate
+    request()->validate([
+        'title' => ['required', 'min:3'],
+        'salary' => ['required'],
+    ]);
+    //2. authorize (On hold... )
+
+    //3. update the job
+    $job = Job::findOrFail($id); //findOrFail busca un registro por su ID y lanza una excepción si no se encuentra. Esto es útil para manejar errores de manera más efectiva.
+
+    $job->update([
+        'title' => request('title'),
+        'salary' => request('salary')
+    ]);
+
+    //5. redirect to the job page
+    return redirect('/jobs/' . $job->id); //Redirigimos a la página del trabajo después de actualizarlo
+});
+
 
 //Destroy -- Ruta para eliminar un trabajo específico
-Route::delete('/jobs/{id}', function ($id) {});
+Route::delete('/jobs/{id}', function ($id) {
+
+    Job::findOrFail($id)->delete();
+
+    return redirect('/jobs'); //Redirigimos a la lista de trabajos después de eliminar el trabajo
+});
 //delete es un método HTTP que se utiliza para eliminar un recurso específico en la base de datos. En este caso, se utiliza para eliminar un trabajo específico.
 
 Route::get('/contact', function () { //ruta para mostrar el formulario de contacto
